@@ -7,7 +7,6 @@ resource "aws_launch_template" "launch_template" {
     network_interfaces {
       associate_public_ip_address = true
       security_groups = [ aws_security_group.sg.id ]
-      #subnet_id = 
     }
     tag_specifications {
       resource_type = "instance"
@@ -29,4 +28,8 @@ resource "aws_autoscaling_group" "asg" {
       id = aws_launch_template.launch_template.id
       version = "$Latest"
     }
+
+      lifecycle {
+        create_before_destroy = true
+  }
 }

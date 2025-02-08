@@ -1,12 +1,22 @@
+# application load balancer
 resource "aws_lb" "load_balancer" {
     name = "${var.name}-lb"
     internal = false
-    load_balancer_type = "application"            #application load balancer
+    load_balancer_type = var.load_balancer_type            
     security_groups = [aws_security_group.sg.id]
     subnets = aws_subnet.public_subnet[*].id
     enable_deletion_protection = false
+
+    tags = {
+        Name = "${var.name}-lb"
+    }
+
+    lifecycle {
+        create_before_destroy = true
+  }
 }
 
+# listener
 resource "aws_lb_listener" "lb_listener" {
     load_balancer_arn = aws_lb.load_balancer.arn
     port = 80
@@ -17,6 +27,7 @@ resource "aws_lb_listener" "lb_listener" {
     }
 }
 
+# target group
 resource "aws_lb_target_group" "target_group" {
     name = "${var.name}-tg"
     port = 80
@@ -26,14 +37,28 @@ resource "aws_lb_target_group" "target_group" {
         enabled = true
         interval = 30
         path = "/"
-        port = "traffic-port"
         protocol = "HTTP"
+        timeout = 5
         healthy_threshold = 3
         unhealthy_threshold = 2
-        timeout = 5
     }
+
     tags = {
-        Name = "tg"
+        Name = "${var.name}-tg"
     }  
+
+      lifecycle {
+        create_before_destroy = false
+  }
+}
+
+# attach existing instance to a tatget group
+resource "aws_lb_target_group_attachment" "attach_instance_to_TG" {
+    count = 1
+    target_group_arn = aws_lb_target_group.target_group.arn
+    target_id = aws_instance.vm[count.index].id  
+    port = 80
+
+    depends_on = [ aws_instance.vm ]
 }
 

@@ -3,11 +3,6 @@ output "lb_dns" {
     value = aws_lb.load_balancer.dns_name
 }
 
-# output "autoscaling_group_name" {
-#   description = "The name of the Auto Scaling Group"
-#   value       = aws_autoscaling_group.asg.name
-# }
-
 # Output the Load Balancer DNS Name
 output "load_balancer_dns" {
   description = "The DNS name of the Load Balancer"

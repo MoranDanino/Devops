@@ -40,7 +40,7 @@ variable "instance_type" {
     type = string
     default = "t2.micro"
     validation {
-        condition     = contains(["t2.micro", "t2.small", "t2.medium", "t2.large","t2.xlarge"], var.instance_type)
+        condition = contains(["t2.micro", "t2.small", "t2.medium", "t2.large","t2.xlarge"], var.instance_type)
         error_message = "This is not a possible instance type"
     } 
 }
@@ -60,6 +60,15 @@ variable "number_of_public_subnet" {
     type = number
     default = 2
 
+}
+
+variable "load_balancer_type" {
+    default = "application"
+    validation {
+        condition = contains(["application", "network", "gateway"], var.load_balancer_type)
+        error_message = "This is not a possible type of load balancer"
+    } 
+  
 }
 
 

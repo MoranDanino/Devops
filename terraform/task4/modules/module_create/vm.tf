@@ -20,8 +20,8 @@ resource "aws_security_group" "sg" {
 }
 
 resource "aws_instance" "vm" {
-    count = var.number_of_public_subnet ############################
-    ami = var.ami # ubuntu 22.04 in us-east-1  
+    count = var.number_of_public_subnet 
+    ami = var.ami    
     instance_type = var.instance_type
     vpc_security_group_ids = [aws_security_group.sg.id]
     subnet_id = aws_subnet.public_subnet[count.index].id          
