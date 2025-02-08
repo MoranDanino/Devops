@@ -21,8 +21,8 @@
 # global - handle the variables
 # validation - check if public ip assign
 # vpc - handle create vpc, subnets, internet gateway, route tables 
-# vm - create ec2 instance, security group
-# alb - create load balancer, load balancer listener, target group and attch to ec2 instance
+# sg - create the security group
+# alb - create load balancer, load balancer listener, target group  
 # as - create auto scaling group and launch tamplate
 # outputs - handle the outputs we what to print
 

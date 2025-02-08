@@ -26,6 +26,7 @@ resource "aws_lb_listener" "lb_listener" {
       type = "forward"
       target_group_arn = aws_lb_target_group.target_group.arn
     }
+    depends_on = [ aws_lb_target_group.target_group ]
 }
 
 # target group
@@ -37,10 +38,12 @@ resource "aws_lb_target_group" "target_group" {
     health_check {
         enabled = true
         interval = 30
+        timeout = 5
         path = "/"
         protocol = "HTTP"
         healthy_threshold = 3
         unhealthy_threshold = 2
+        matcher = "200"
     }
 
     tags = {
@@ -50,15 +53,5 @@ resource "aws_lb_target_group" "target_group" {
     lifecycle {
         create_before_destroy = false
     }
-}
-
-# attach existing instance to a tatget group
-resource "aws_lb_target_group_attachment" "attach_instance_to_TG" {
-    count = 1
-    target_group_arn = aws_lb_target_group.target_group.arn
-    target_id = aws_instance.vm[count.index].id  
-    port = 80
-
-    depends_on = [ aws_instance.vm ]
 }
 
