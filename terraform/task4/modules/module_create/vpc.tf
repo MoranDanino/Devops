@@ -13,11 +13,18 @@ resource "aws_subnet" "public_subnet" {
     vpc_id = aws_vpc.vpc.id
     cidr_block = cidrsubnet(var.vpc_cidr, 8, count.index) 
     map_public_ip_on_launch = true
+    availability_zone = var.az[count.index]
 
     tags = {
         Name = "${var.name}-public_subnet-${count.index}"
     }
 }
+
+    # count = var.number_of_public_subnet
+    # vpc_id = aws_vpc.vpc.id
+    # cidr_block = var.public_sub_ip[count.index] 
+    # map_public_ip_on_launch = true
+    # availability_zone = var.az[count.index]
 
 
 resource "aws_subnet" "private_subnet" {
