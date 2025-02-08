@@ -1,14 +1,14 @@
 # Create VPC 
 
-resource "random_shuffle" "random_vpc_cidr" {  #choose one cidr from the range fot using it
-    input = var.vpc_cidr
-    result_count = 1
-}
+# resource "random_shuffle" "random_vpc_cidr" {  #choose one cidr from the range fot using it
+#     input = var.vpc_cidr
+#     result_count = 1
+# }
 
 resource "aws_vpc" "vpc" {
-    cidr_block = random_shuffle.random_vpc_cidr.result[0]
-    enable_dns_support   = true
-    enable_dns_hostnames = true
+    cidr_block = var.vpc_cidr
+    # enable_dns_support   = true
+    # enable_dns_hostnames = true
     tags = {
         Name = "${var.name}-vpc"
     }
@@ -24,10 +24,10 @@ data "aws_subnets" "existing" {
 
 # Create two subnets inside the VPC - one private and one public
 resource "aws_subnet" "public_subnet" {
-    count = var.subnet_counter                           #count number of subnets
+    count = var.subnet_counter                    #count number of subnets
     vpc_id = aws_vpc.vpc.id
-    cidr_block = cidrsubnet(aws_vpc.vpc.cidr_block, 8, count.index) #var.subnet_counter[count.index]
-    availability_zone = var.az 
+    cidr_block = var.public_sub_ip[count.index]  #cidrsubnet(aws_vpc.vpc.cidr_block, 8, count.index)
+    availability_zone = var.az[count.index % length(var.az)]
     map_public_ip_on_launch = var.bool_public_ip_assign  #according to the user desicion
     depends_on = [ aws_subnet.private_subnet ]
     tags = {
@@ -36,13 +36,13 @@ resource "aws_subnet" "public_subnet" {
 }
 
 resource "aws_subnet" "private_subnet" {
-    count = 1
+    count = var.subnet_counter 
     vpc_id = aws_vpc.vpc.id
-    cidr_block = cidrsubnet(aws_vpc.vpc.cidr_block, 8, count.index) #"10.0.1.0/24"
-    availability_zone = var.az 
+    cidr_block = var.private_sub_ip[count.index]    #cidrsubnet(aws_vpc.vpc.cidr_block, 8, count.index) 
+    availability_zone = var.az[count.index % length(var.az)]
 
     tags = {
-        Name = "${var.name}-private_subnet"
+        Name = "${var.name}-private_subnet-${count.index}"
     }
 }
 
@@ -54,7 +54,6 @@ resource "aws_internet_gateway" "internet_gateway" {
       Name = "${var.name}-IG"
     }
 }
-
 
 # route table for the public subnet + associate it:
 resource "aws_route_table" "route_table_public" {
