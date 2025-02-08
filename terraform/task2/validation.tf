@@ -2,18 +2,17 @@ terraform {
     required_providers {
         time = {
             source = "hashicorp/time"
-            version = "0.12.1" # Make sure to use the version that match latest version
+            version = "0.12.1"      # important
         }
     }
 }
 
 resource "time_sleep" "wait_for_ip" {
-    create_duration = "40s" # Wait for 10 seconds
+    create_duration = "40s" 
 }
 
 resource "null_resource" "check_public_ip" {   # see this in lab103
   provisioner "local-exec" {
-    #interpreter = ["/bin/bash", "-c"] # Forces script to run in bash
     command = <<EOT
     retries=4
     interval=30

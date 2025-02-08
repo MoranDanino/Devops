@@ -1,4 +1,6 @@
-# auto scaling
+
+# auto scaling:
+# launch template
 resource "aws_launch_template" "launch_template" {
     name_prefix = "${var.name}-launch_template"
     image_id = var.ami
@@ -16,6 +18,7 @@ resource "aws_launch_template" "launch_template" {
     }
 }
 
+# auto scaling group
 resource "aws_autoscaling_group" "asg" {
     count = 1
     desired_capacity = 1
@@ -28,8 +31,8 @@ resource "aws_autoscaling_group" "asg" {
       id = aws_launch_template.launch_template.id
       version = "$Latest"
     }
-
-      lifecycle {
-        create_before_destroy = true
-  }
+    
+    lifecycle {
+      create_before_destroy = true
+    }
 }

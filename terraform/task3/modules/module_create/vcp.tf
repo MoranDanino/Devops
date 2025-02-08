@@ -1,44 +1,37 @@
-# Create VPC 
 
-# resource "random_shuffle" "random_vpc_cidr" {  #choose one cidr from the range fot using it
-#     input = var.vpc_cidr
-#     result_count = 1
-# }
-
+# create vpc
 resource "aws_vpc" "vpc" {
     cidr_block = var.vpc_cidr
-    # enable_dns_support   = true
-    # enable_dns_hostnames = true
+
     tags = {
         Name = "${var.name}-vpc"
     }
 }
 
-data "aws_subnets" "existing" {
-  filter {
-    name   = "vpc-id"
-    values = [aws_vpc.vpc.id]
-  }
-}
-
-
 # Create two subnets inside the VPC - one private and one public
 resource "aws_subnet" "public_subnet" {
-    count = var.subnet_counter                    #count number of subnets
+    count = var.subnet_counter                                    #count number of subnets
     vpc_id = aws_vpc.vpc.id
-    cidr_block = var.public_sub_ip[count.index]  #cidrsubnet(aws_vpc.vpc.cidr_block, 8, count.index)
+    cidr_block = var.public_sub_ip[count.index]  
     availability_zone = var.az[count.index % length(var.az)]
-    map_public_ip_on_launch = var.bool_public_ip_assign  #according to the user desicion
+    map_public_ip_on_launch = var.bool_public_ip_assign           #according to the user desicion
     depends_on = [ aws_subnet.private_subnet ]
     tags = {
         Name = "${var.name}-public_subnet-${count.index}"
     }
 }
 
+data "aws_vpc" "existing" {
+  filter {
+    name   = "vpc-id"
+    values = [aws_vpc.vpc.id]
+  }
+}
+
 resource "aws_subnet" "private_subnet" {
     count = var.subnet_counter 
     vpc_id = aws_vpc.vpc.id
-    cidr_block = var.private_sub_ip[count.index]    #cidrsubnet(aws_vpc.vpc.cidr_block, 8, count.index) 
+    cidr_block = var.private_sub_ip[count.index]    
     availability_zone = var.az[count.index % length(var.az)]
 
     tags = {
@@ -92,15 +85,9 @@ resource "aws_route_table" "route_table_private" {
 
 #assosiate route table with the public subnet 
 resource "aws_route_table_association" "routetable_ass_privatesubnet" {
-    # route_table_id = aws_route_table.route_table_private.id
-    # subnet_id = aws_subnet.private_subnet.id
     count = length(aws_subnet.private_subnet) 
     route_table_id = aws_route_table.route_table_private.id
     subnet_id = aws_subnet.private_subnet[count.index].id
 
     depends_on = [aws_subnet.private_subnet]
 }
-
-# data "aws_subnet" "all_subnet" {
-#     vpc_id = data.aws_vpc.id
-# }

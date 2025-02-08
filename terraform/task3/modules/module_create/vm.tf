@@ -1,3 +1,4 @@
+# security group
 resource "aws_security_group" "sg" {
   name = "${var.name}-sg"
   vpc_id = aws_vpc.vpc.id
@@ -19,11 +20,12 @@ resource "aws_security_group" "sg" {
     }
 }
 
+# create the vm
 resource "aws_instance" "vm" {
-    ami = var.ami # ubuntu 22.04 in us-east-1  
+    ami = var.ami                                 # ubuntu 22.04 in us-east-1  
     instance_type = var.instance_type
     vpc_security_group_ids = [aws_security_group.sg.id]
-    subnet_id = aws_subnet.public_subnet[0].id                   ##############
+    subnet_id = aws_subnet.public_subnet[0].id                   
     associate_public_ip_address = var.bool_public_ip_assign
     tags = {
         Name = "${var.name}-vm"

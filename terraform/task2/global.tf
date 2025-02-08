@@ -8,7 +8,6 @@ variable "region" {
 
 variable "ami" {
     default = "ami-0e1bed4f06a3b463d"
-  
 }
 
 variable "instance_type" {
@@ -32,7 +31,6 @@ variable "vpc_cidr" {
 variable "ingress_rules" {
     type = list(number)
     default = [22,80]
-  
 }
 
 

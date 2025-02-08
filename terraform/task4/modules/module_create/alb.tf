@@ -1,3 +1,4 @@
+
 # application load balancer
 resource "aws_lb" "load_balancer" {
     name = "${var.name}-lb"
@@ -13,7 +14,7 @@ resource "aws_lb" "load_balancer" {
 
     lifecycle {
         create_before_destroy = true
-  }
+    }
 }
 
 # listener
@@ -47,9 +48,9 @@ resource "aws_lb_target_group" "target_group" {
         Name = "${var.name}-tg"
     }  
 
-      lifecycle {
+    lifecycle {
         create_before_destroy = false
-  }
+    }
 }
 
 # attach existing instance to a tatget group

@@ -8,16 +8,10 @@ variable "region" {
 
 variable "ami" {
     default = "ami-0e1bed4f06a3b463d"
-  
-}
-
-variable "vm_size" {
-    default = "t2.micro"
-  
 }
 
 variable "name" {
-    default = "moran"
+    default = "user"
 }
 
 variable "az" {
@@ -27,13 +21,11 @@ variable "az" {
 
 variable "vpc_cidr" {
     default = "10.0.0.0/16"
-  
 }
 
 variable "ingress_rules" {
     type = list(number)
     default = [22,80]
-  
 }
 
 variable "instance_type" {
@@ -68,7 +60,6 @@ variable "load_balancer_type" {
         condition = contains(["application", "network", "gateway"], var.load_balancer_type)
         error_message = "This is not a possible type of load balancer"
     } 
-  
 }
 
 

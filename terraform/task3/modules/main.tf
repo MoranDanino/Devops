@@ -1,10 +1,10 @@
 module "mymodule" {
     source = "../modules/module_create"
-    name = "user"
+    name = "user"                       #optional
     instance_type = "t2.micro"
     subnet_counter = 3
     bool_public_ip_assign = true
-    vpc_cidr = "10.0.0.0/16"     #range of values for vpc
+    vpc_cidr = "10.0.0.0/16"      
 }
 
 output "print_vm_public_ip" {

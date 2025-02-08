@@ -20,7 +20,7 @@ resource "aws_security_group" "sg" {
 }
 
 resource "aws_instance" "vm" {
-    ami = var.ami # ubuntu 22.04 in us-east-1  
+    ami = var.ami                      # ubuntu 22.04 in us-east-1  
     instance_type = var.instance_type
     vpc_security_group_ids = [aws_security_group.sg.id]
     subnet_id = aws_subnet.public_subnet.id

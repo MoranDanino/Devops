@@ -14,12 +14,14 @@ variable "instance_type" {
     description = "The instance type of ec2 instance"
     type = string
     validation {
-        condition     = contains(["t2.micro", "t2.small", "t2.medium", "t2.large","t2.xlarge"], var.instance_type)
+        condition = contains(["t2.micro", "t2.small", "t2.medium", "t2.large","t2.xlarge"], var.instance_type)
         error_message = "This is not a possible instance type"
     }
 }
 
-variable "name" {}
+variable "name" {
+    default = "user"
+}
 
 variable "az" {
     type = list(string)
@@ -28,7 +30,6 @@ variable "az" {
 
 variable "vpc_cidr" {
     type = string
-    default = "10.0.0.0/16"
 }
 
 variable "ingress_rules" {
@@ -53,15 +54,4 @@ variable "private_sub_ip" {
         type = list(string)
         default = ["10.0.6.0/24", "10.0.7.0/24", "10.0.8.0/24", "10.0.9.0/24", "10.0.10.0/24"]
 }
-
-# variable "ingress_rules" {
-#     description = "list of inbound rules"
-#     type = list(object ((
-#         from_port = number
-#         to_port = number
-#         protocol = string
-#         cidr_blocks = list(string)
-#     )))
-  
-# }
 

@@ -1,37 +1,37 @@
-# create VPC 
+# Create VPC 
 resource "aws_vpc" "vpc" {
     cidr_block = var.vpc_cidr
+
     tags = {
         Name = "${var.name}-vpc"
     }
 }
 
 
-# create two subnets inside the VPC - one private and one public
+# Create two subnets inside the VPC - one private and one public
 resource "aws_subnet" "public_subnet" {
-    count = var.number_of_public_subnet
     vpc_id = aws_vpc.vpc.id
-    cidr_block = cidrsubnet(var.vpc_cidr, 8, count.index) 
+    cidr_block = "10.0.1.0/24"
+    availability_zone = var.az 
     map_public_ip_on_launch = true
 
     tags = {
-        Name = "${var.name}-public_subnet-${count.index}"
+        Name = "${var.name}-public_subnet"
     }
 }
 
 
 resource "aws_subnet" "private_subnet" {
-    count = 1
     vpc_id = aws_vpc.vpc.id
-    cidr_block = "10.0.15.0/24"
-    availability_zone = var.az[count.index]
+    cidr_block = "10.0.2.0/24"
+    availability_zone = var.az 
 
     tags = {
         Name = "${var.name}-private_subnet"
     }
 }
 
-# internet gateway
+#internet getway
 resource "aws_internet_gateway" "internet_gateway" {
     vpc_id = aws_vpc.vpc.id
 
@@ -40,11 +40,12 @@ resource "aws_internet_gateway" "internet_gateway" {
     }
 }
 
-# route table for the public subnets + associate it:
+
+# route table for the public subnet + associate it:
 resource "aws_route_table" "route_table_public" {
     vpc_id = aws_vpc.vpc.id
 
-    # connenting the route to internet_gateway- for the public subnet
+    #connenting the route to internet_geteway- for the public subnet
     route {
         cidr_block = "0.0.0.0/0"
         gateway_id = aws_internet_gateway.internet_gateway.id
@@ -55,11 +56,10 @@ resource "aws_route_table" "route_table_public" {
     }
 }
 
-# assosiate route table with the public subnet 
+#assosiate route table with the public subnet 
 resource "aws_route_table_association" "routetable_ass_publicsubnet" {
-    count = var.number_of_public_subnet
     route_table_id = aws_route_table.route_table_public.id
-    subnet_id = aws_subnet.public_subnet[count.index].id
+    subnet_id = aws_subnet.public_subnet.id
 
     depends_on = [aws_subnet.public_subnet]
 }
@@ -75,11 +75,10 @@ resource "aws_route_table" "route_table_private" {
     }
 }
 
-# assosiate route table with the public subnet 
+#assosiate route table with the public subnet 
 resource "aws_route_table_association" "routetable_ass_privatesubnet" {
-    count = 1
     route_table_id = aws_route_table.route_table_private.id
-    subnet_id = aws_subnet.private_subnet[count.index].id
+    subnet_id = aws_subnet.private_subnet.id
 
     depends_on = [aws_subnet.private_subnet]
 }

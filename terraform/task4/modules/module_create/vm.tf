@@ -1,3 +1,5 @@
+
+# security group
 resource "aws_security_group" "sg" {
   name = "${var.name}-sg"
   vpc_id = aws_vpc.vpc.id
@@ -19,8 +21,9 @@ resource "aws_security_group" "sg" {
     }
 }
 
+# create vm
 resource "aws_instance" "vm" {
-    count = var.number_of_public_subnet 
+    count = 1
     ami = var.ami    
     instance_type = var.instance_type
     vpc_security_group_ids = [aws_security_group.sg.id]
